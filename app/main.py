@@ -1,5 +1,5 @@
-# Use curl to send custom HTTP requests and debug locally. Eg: curl -i -X GET http://localhost:4221/index.html
 
+# Use curl to send custom HTTP requests and debug locally. Eg: curl -i -X GET http://localhost:4221/index.html
 
 import socket
 
@@ -20,14 +20,16 @@ def main():
     print(f"Received data {data.decode()}")
     url = data.decode()
     path = url.split(" ")[1]
-    if path == '/':
-    # send a response back to the client
-    #
-    # esta wea se manda en bytes porque 
-    # usa sockets en este caso con conexion TCP 
-    # para la comunicacion
-    # 
+    if path.startswith('/echo/'):
+        response = f"HTTP/1.1 200 OK \r\nContent-Type: text/plain\r\nContent-Length: {len(path[6:])}\r\n\r\n{path[6:]}"
+        connection_client.send(response.encode()) # send a response back to the client
+    elif path == '/':
         connection_client.send(b"HTTP/1.1 200 OK\r\n\r\n") 
+        #
+        # esta wea se manda en bytes porque 
+        # usa sockets en este caso con conexion TCP 
+        # para la comunicacion
+        # 
     else:
         connection_client.send(b"HTTP/1.1 404 NOT FOUND\r\n\r\n") 
 
